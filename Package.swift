@@ -30,7 +30,7 @@ let package = Package(
 // SwiftUIWeb's DOMViewRepresentable, so a view that imports SkipMotion builds for iOS, Android and the web unchanged.
 if Context.environment["SWIFTUIWEB_EMBEDDED"] != nil {
     package.platforms = nil
-    package.dependencies = [.package(url: "https://github.com/Vitorsilveira31/SwiftUIWeb.git", from: "0.1.49")]
+    package.dependencies = [.package(url: "https://github.com/Vitorsilveira31/SwiftUIWeb.git", from: "0.1.39")]
     package.targets = [
         .target(name: "SkipMotion", dependencies: [
             .product(name: "SwiftUIWeb", package: "swiftuiweb"),
