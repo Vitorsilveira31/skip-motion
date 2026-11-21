@@ -9,8 +9,8 @@ let package = Package(
         .library(name: "SkipMotion", targets: ["SkipMotion"]),
     ],
     dependencies: [
-        .package(url: "https://source.skip.tools/skip.git", from: "1.6.2"),
-        .package(url: "https://source.skip.tools/skip-ui.git", from: "1.33.1"),
+        .package(url: "https://github.com/skiptools/skip.git", from: "1.6.2"),
+        .package(url: "https://github.com/skiptools/skip-ui.git", from: "1.33.1"),
         .package(url: "https://github.com/airbnb/lottie-ios.git", from: "4.6.0"),
     ],
     targets: [
@@ -38,7 +38,7 @@ if Context.environment["SWIFTUIWEB_EMBEDDED"] != nil {
         ], path: "Sources/SkipMotionWeb"),
     ]
 } else if Context.environment["SKIP_BRIDGE"] ?? "0" != "0" {
-    package.dependencies += [.package(url: "https://source.skip.tools/skip-fuse-ui.git", from: "1.0.0")]
+    package.dependencies += [.package(url: "https://github.com/skiptools/skip-fuse-ui.git", from: "1.0.0")]
     package.targets.forEach({ target in
         target.dependencies += [.product(name: "SkipFuseUI", package: "skip-fuse-ui")]
     })
