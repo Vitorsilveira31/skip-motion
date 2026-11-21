@@ -25,7 +25,19 @@ let package = Package(
     ]
 )
 
-if Context.environment["SKIP_BRIDGE"] ?? "0" != "0" {
+// The browser build of SwiftUIWeb (https://github.com/Vitorsilveira31/SwiftUIWeb) sets SWIFTUIWEB_EMBEDDED. There the
+// same `SkipMotion` product is a web implementation (Sources/SkipMotionWeb) that draws with lottie-web through
+// SwiftUIWeb's DOMViewRepresentable, so a view that imports SkipMotion builds for iOS, Android and the web unchanged.
+if Context.environment["SWIFTUIWEB_EMBEDDED"] != nil {
+    package.platforms = nil
+    package.dependencies = [.package(url: "https://github.com/Vitorsilveira31/SwiftUIWeb.git", from: "0.1.49")]
+    package.targets = [
+        .target(name: "SkipMotion", dependencies: [
+            .product(name: "SwiftUIWeb", package: "swiftuiweb"),
+            .product(name: "SwiftUIWebWeb", package: "swiftuiweb"),
+        ], path: "Sources/SkipMotionWeb"),
+    ]
+} else if Context.environment["SKIP_BRIDGE"] ?? "0" != "0" {
     package.dependencies += [.package(url: "https://source.skip.tools/skip-fuse-ui.git", from: "1.0.0")]
     package.targets.forEach({ target in
         target.dependencies += [.product(name: "SkipFuseUI", package: "skip-fuse-ui")]
