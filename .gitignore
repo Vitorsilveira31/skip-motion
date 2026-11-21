@@ -108,3 +108,6 @@ build
 
 # gradle properties
 local.properties
+
+# SwiftUIWeb player (Web/)
+Web/node_modules/

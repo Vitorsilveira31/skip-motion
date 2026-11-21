@@ -79,6 +79,48 @@ size of the release `.ipa` and `.apk` artifacts for your project.
 See the [LottieDemo](https://source.skip.dev/skipapp-lottiedemo/releases)
 project for an example of using `SkipMotion` in a Skip App project.
 
+## Web (SwiftUIWeb)
+
+SkipMotion also builds for the browser with [SwiftUIWeb](https://github.com/Vitorsilveira31/SwiftUIWeb), so a view that
+plays a Lottie animation runs on iOS, Android and the web from the same source. When SwiftUIWeb's browser build
+evaluates `Package.swift` (it sets `SWIFTUIWEB_EMBEDDED`), the `SkipMotion` product is the web implementation in
+`Sources/SkipMotionWeb`: the same `MotionView`, `LottieContainer`, `MotionLoopMode` and `MotionContentMode`, drawn by
+[lottie-web](https://github.com/airbnb/lottie-web) through SwiftUIWeb's `DOMViewRepresentable`. Apple and Android builds
+are unchanged.
+
+In the web package, depend on this checkout by path (SwiftUIWeb's builder lowers local packages for Embedded Swift):
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/Vitorsilveira31/SwiftUIWeb.git", from: "0.1.49"),
+    .package(path: "../skip-motion"),
+],
+targets: [
+    .executableTarget(name: "MyWebApp", dependencies: [
+        .product(name: "SwiftUIWeb", package: "swiftuiweb"),
+        .product(name: "SwiftUIWebBrowser", package: "swiftuiweb"),
+        .product(name: "SkipMotion", package: "skip-motion"),
+    ], swiftSettings: [.unsafeFlags(["-module-alias", "SwiftUI=SwiftUIWeb"])]),
+]
+```
+
+The page needs the player, which the app serves from its own origin. Copy (or link) `Web/Resources/skip-motion.js` and
+`Web/Resources/skip-motion-lottie.js` into the app's `Web/Resources`, and load the first from its
+`Web/Resources/head.html`:
+
+```html
+<script type="module" src="./skip-motion.js"></script>
+```
+
+lottie-web is downloaded the first time a `MotionView` is on screen (about 43 KB compressed), so pages without one pay
+nothing. It is lottie-web's SVG player without After Effects expressions, which lottie-web evaluates with `eval` and
+SwiftUIWeb's Content-Security-Policy refuses: an animation that uses expressions plays without them. The last frame is
+lottie-web's `op - 1`, and `enableMergePaths` changes nothing, since lottie-web always draws merge paths.
+
+`Web/` holds the player's source (`Web/src`, built with `bun run build` into `Web/Resources`) and a demo app with its
+browser test: `bash Web/demo/run.sh` builds and serves the demo, `bash Web/demo/run.sh --test` runs the test on Chromium
+and WebKit. Both need a SwiftUIWeb checkout next to this one, or `SWIFTUIWEB_ROOT`.
+
 ## Building
 
 This project is a Swift Package Manager module that uses the

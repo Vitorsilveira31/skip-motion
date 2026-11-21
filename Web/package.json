@@ -1,0 +1,15 @@
+{
+  "name": "skip-motion-web",
+  "private": true,
+  "license": "Apache-2.0",
+  "type": "module",
+  "scripts": {
+    "build": "bun build src/skip-motion-lottie.js --minify --format=esm --target=browser --outfile=Resources/skip-motion-lottie.js",
+    "demo": "bash demo/run.sh",
+    "test": "bash demo/run.sh --test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.65.0",
+    "lottie-web": "5.13.0"
+  }
+}
