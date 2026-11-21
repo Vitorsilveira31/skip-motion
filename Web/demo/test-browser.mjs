@@ -112,6 +112,8 @@ async function scenario(browser, base, engine, worker) {
 
     const header = await page.locator('[data-testid="header"]').textContent();
     check(header === "H|2.0|0.0|60.0|30.0|100.0|100.0", `${label}: LottieContainer reads the header (${header})`);
+    const archived = await page.locator('[data-testid="archived"]').count() ? await page.locator('[data-testid="archived"]').textContent() : null;
+    check(archived === "D|2.0|0.0|60.0|30.0|100.0|100.0", `${label}: LottieContainer reads a dotLottie archive (${archived})`);
 
     check(await waitFor(page, shadowSVG, 15000), `${label}: lottie-web draws the animation`);
     check(loaderRequests.length === 1, `${label}: skip-motion-lottie.js is fetched once (${loaderRequests.length})`);

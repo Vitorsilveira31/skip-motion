@@ -38,6 +38,10 @@ let lottieData = """
 """.data(using: String.Encoding.utf8)!
 ```
 
+`MotionView(lottie:)` and `LottieContainer(data:)` also take a [dotLottie](https://dotlottie.io) (`.lottie`) file: the
+ZIP archive that tools such as Lottielab export, about a tenth the size of the JSON. They play its first animation. iOS
+and the web read the archive in memory, and Android hands it to lottie-android.
+
 ## Setup
 
 To include this framework in your project, add the following

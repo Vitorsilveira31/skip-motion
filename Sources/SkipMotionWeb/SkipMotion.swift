@@ -156,9 +156,13 @@ public struct LottieContainer: Sendable {
     let json: String
     let header: LottieHeader
 
-    /// Creates a Lottie container with the data represented by the given Lottie JSON.
+    /// Creates a Lottie container with the data represented by the given Lottie JSON, or by a dotLottie (`.lottie`)
+    /// archive, whose first animation it reads.
     public init(data lottieData: Data) throws {
-        let bytes = Array(lottieData)
+        var bytes = Array(lottieData)
+        if DotLottieArchive.isArchive(bytes) {
+            bytes = try DotLottieArchive.animationJSON(bytes)
+        }
         guard let header = LottieHeader(scanning: bytes) else { throw LottieContainerError.notAnAnimation }
         self.header = header
         self.json = String(decoding: bytes, as: UTF8.self)

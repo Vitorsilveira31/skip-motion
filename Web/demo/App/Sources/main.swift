@@ -45,9 +45,13 @@ let probeAnimation = """
 "ip":0,"op":60,"st":0,"bm":0}],"markers":[]}
 """
 
+/// `probeAnimation` with its manifest in a dotLottie archive (`zip -9`), in base 64: the container reads the same header.
+let probeDotLottie = "UEsDBBQAAgAIAIWCdV3+1cxvLwAAADAAAAANAAAAbWFuaWZlc3QuanNvbqtWKkstKs7Mz1OyUjLUM9AzUNJRSszLzE0sAYoVK1lFVytlpgDlchMz85RqY2sBUEsDBBQAAgAIAIWCdV2p1wvqKAEAAAADAAAUAAAAYW5pbWF0aW9ucy9tYWluLmpzb25tUtuSgjAM/Zc8d5jiorvTX3F4KLeVASzbdlcZhn83CVVX6YOecpKc5KSd4Q8U7JPPJAMBjQX1IQW0IygEg3BAvIBKJeIp4HnAmtGaosaaqqo4WTtXewfqmAvo9VRbOs+PcHtGTAX4CVQWJNzPr7ak4SzHOiyZwdCf5qKOGy4C7AtHzBiYlBls5DlKTXdS7KWQOEdLSVekUvyYGLHU3FkZWJkvi2CFQ5D4ChIL5euX5kfkKcKJ/3laTfiRHmizTnTSY73ugrzDt4VgvzBXPLb+GbMlLZRNcYatSw+bRuhvxwOMm8HyyK7YGqk3/b1z0/Z0Lt8MCJlkaO65pO0tpA81Tz7iE+goG19XHr3dWHfXbdKcfveKN7Z5vm59GsVAGRgetO3W55kvN1BLAQIeAxQAAgAIAIWCdV3+1cxvLwAAADAAAAANAAAAAAAAAAEAAACkgQAAAABtYW5pZmVzdC5qc29uUEsBAh4DFAACAAgAhYJ1XanXC+ooAQAAAAMAABQAAAAAAAAAAQAAAKSBWgAAAGFuaW1hdGlvbnMvbWFpbi5qc29uUEsFBgAAAAACAAIAfQAAALQBAAAAAA=="
+
 private struct MotionDemoRoot: View {
   @State private var model = MotionDemoModel()
   private let container = try? LottieContainer(data: Data(probeAnimation.utf8))
+  private let archived = Data(base64Encoded: probeDotLottie).flatMap { try? LottieContainer(data: $0) }
 
   var body: some View {
     VStack(alignment: .leading, spacing: 8) {
@@ -80,6 +84,10 @@ private struct MotionDemoRoot: View {
       if let container {
         Text("H|\(container.duration)|\(container.startFrame)|\(container.endFrame)|\(container.framerate)|\(container.width)|\(container.height)")
           .accessibilityIdentifier("header")
+      }
+      if let archived {
+        Text("D|\(archived.duration)|\(archived.startFrame)|\(archived.endFrame)|\(archived.framerate)|\(archived.width)|\(archived.height)")
+          .accessibilityIdentifier("archived")
       }
       Text(model.lines.joined(separator: "\n")).accessibilityIdentifier("log")
     }

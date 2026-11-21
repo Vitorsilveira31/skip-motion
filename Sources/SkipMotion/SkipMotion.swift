@@ -8,6 +8,7 @@ import Lottie
 #else
 import com.airbnb.lottie.__
 import com.airbnb.lottie.compose.__
+import java.util.zip.ZipInputStream
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
@@ -250,12 +251,24 @@ public struct LottieContainer : Sendable {
     let lottieComposition: LottieComposition
     #endif
 
-    /// Creates a Lottie container with the data represented by the given Lottie JSON.
+    /// Creates a Lottie container with the data represented by the given Lottie JSON, or by a dotLottie (`.lottie`)
+    /// archive, whose first animation it reads.
     public init(data lottieData: Data) throws {
         #if !SKIP
-        self.lottieAnimation = try LottieAnimation.from(data: lottieData)
+        // A dotLottie archive is read in memory (DotLottieArchive), not through lottie-ios's DotLottieFile, which
+        // unpacks it into temporary files and must not run on the main thread.
+        let bytes = [UInt8](lottieData)
+        if DotLottieArchive.isArchive(bytes) {
+            self.lottieAnimation = try LottieAnimation.from(data: Data(DotLottieArchive.animationJSON(bytes)))
+        } else {
+            self.lottieAnimation = try LottieAnimation.from(data: lottieData)
+        }
         #else
-        let compositionResult = try LottieCompositionFactory.fromJsonInputStreamSync(lottieData.platformData.inputStream(), nil)
+        // lottie-android reads a dotLottie archive (a ZIP) itself.
+        let isArchive = lottieData.count >= 4 && lottieData[0] == UInt8(0x50) && lottieData[1] == UInt8(0x4B)
+        let compositionResult = isArchive
+            ? try LottieCompositionFactory.fromZipStreamSync(ZipInputStream(lottieData.platformData.inputStream()), nil)
+            : try LottieCompositionFactory.fromJsonInputStreamSync(lottieData.platformData.inputStream(), nil)
 
         guard let composition = compositionResult.getValue() else {
             throw compositionResult.getException() ?? IllegalArgumentException("Unable to load composition from data")
