@@ -8,7 +8,7 @@ let package = Package(
   name: "MotionDemo",
   platforms: [.macOS(.v15)],
   dependencies: [
-    .package(url: "https://github.com/Vitorsilveira31/SwiftUIWeb.git", from: "0.1.49"),
+    .package(url: "https://github.com/Vitorsilveira31/SwiftUIWeb.git", from: "0.1.39"),
     .package(path: "../skip-motion"),
   ],
   targets: [

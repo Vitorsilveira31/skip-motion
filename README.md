@@ -92,7 +92,7 @@ In the web package, depend on this checkout by path (SwiftUIWeb's builder lowers
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Vitorsilveira31/SwiftUIWeb.git", from: "0.1.49"),
+    .package(url: "https://github.com/Vitorsilveira31/SwiftUIWeb.git", from: "0.1.39"),
     .package(path: "../skip-motion"),
 ],
 targets: [
