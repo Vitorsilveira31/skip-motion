@@ -108,13 +108,15 @@ targets: [
 ]
 ```
 
-The page needs the player, which the app serves from its own origin. Copy (or link) `Web/Resources/skip-motion.js` and
-`Web/Resources/skip-motion-lottie.js` into the app's `Web/Resources`, and load the first from its
-`Web/Resources/head.html`:
+The page needs the player, which ships with this package in `Web/Resources/` (`skip-motion.js` and
+`skip-motion-lottie.js`), with a `head.html` that loads the first:
 
 ```html
 <script type="module" src="./skip-motion.js"></script>
 ```
+
+SwiftUIWeb's browser build copies a local package dependency's `Web/Resources/` into the application's bundle and puts
+its `head.html` before the application's, so an application that depends on this package by path keeps no copies.
 
 lottie-web is downloaded the first time a `MotionView` is on screen (about 43 KB compressed), so pages without one pay
 nothing. It is lottie-web's SVG player without After Effects expressions, which lottie-web evaluates with `eval` and
