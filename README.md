@@ -96,7 +96,7 @@ In the web package, depend on this checkout by path (SwiftUIWeb's builder lowers
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/Vitorsilveira31/SwiftUIWeb.git", from: "0.1.39"),
+    .package(url: "https://github.com/Vitorsilveira31/SwiftUIWeb.git", from: "0.1.40"),
     .package(path: "../skip-motion"),
 ],
 targets: [
@@ -115,8 +115,10 @@ The page needs the player, which ships with this package in `Web/Resources/` (`s
 <script type="module" src="./skip-motion.js"></script>
 ```
 
-SwiftUIWeb's browser build copies a local package dependency's `Web/Resources/` into the application's bundle and puts
-its `head.html` before the application's, so an application that depends on this package by path keeps no copies.
+SwiftUIWeb's browser build (0.1.40 and later) copies a local package dependency's `Web/Resources/` into the
+application's bundle and puts its `head.html` before the application's, so an application that depends on this package
+by path keeps no copies. With SwiftUIWeb 0.1.39 or earlier, copy (or link) both files into the application's
+`Web/Resources` and add that script line to its `head.html`.
 
 lottie-web is downloaded the first time a `MotionView` is on screen (about 43 KB compressed), so pages without one pay
 nothing. It is lottie-web's SVG player without After Effects expressions, which lottie-web evaluates with `eval` and
